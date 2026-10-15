@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCT LSC 1503 - LPA 6</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+        padding: 20px;
+        min-height: 100vh;
+        color: #1f2937;
+    }
+
+    .container {
+        max-width: 850px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #450a0a 0%, #ef4444 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 2em;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .header p {
+        font-size: 1.1em;
+        opacity: 0.95;
+    }
+
+    .content { padding: 40px 30px; }
+
+    .student-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .info-field.wide { grid-column: 1 / -1; }
+
+    .info-field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #450a0a;
+        font-size: 0.95em;
+    }
+
+    .info-field input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #fecaca;
+        border-radius: 8px;
+        font-size: 1em;
+        font-family: inherit;
+        background: #fef2f2;
+    }
+
+    .info-field input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
+        background: white;
+    }
+
+    .instructions {
+        background: #fef2f2;
+        border-left: 5px solid #dc2626;
+        border-radius: 8px;
+        padding: 20px 22px;
+        margin-bottom: 35px;
+    }
+
+    .instructions h2 {
+        color: #450a0a;
+        font-size: 1.15em;
+        margin-bottom: 10px;
+    }
+
+    .instructions p {
+        line-height: 1.65;
+        margin-bottom: 8px;
+    }
+
+    .instructions p:last-child { margin-bottom: 0; }
+
+    .stage {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin: 0 0 20px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #fecaca;
+    }
+
+    .stage:not(:first-of-type) { margin-top: 40px; }
+
+    .stage h2 {
+        font-size: 1.15em;
+        color: #7f1d1d;
+        font-weight: 700;
+    }
+
+    .stage span {
+        font-size: 0.92em;
+        color: #6b7280;
+    }
+
+    .question { margin-bottom: 32px; }
+
+    .question-text {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-weight: 600;
+        font-size: 1.08em;
+        line-height: 1.5;
+        margin-bottom: 8px;
+        color: #111827;
+    }
+
+    .question-number {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #b91c1c;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95em;
+    }
+
+    .question-hint {
+        margin: 0 0 12px 44px;
+        color: #6b7280;
+        font-style: italic;
+        font-size: 0.95em;
+        line-height: 1.5;
+    }
+
+    textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px 14px;
+        border: 2px solid #fecaca;
+        border-radius: 8px;
+        font-size: 1em;
+        font-family: inherit;
+        line-height: 1.6;
+        resize: none;
+        overflow: hidden;
+        background: #fffcfc;
+    }
+
+    .q-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+    }
+
+    .starter-btn {
+        background: none;
+        border: none;
+        color: #b91c1c;
+        font-weight: 600;
+        font-size: 0.92em;
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        font-family: inherit;
+        padding: 2px 0;
+    }
+
+    .starter-btn:focus-visible {
+        outline: 2px solid #dc2626;
+        outline-offset: 2px;
+    }
+
+    .counter {
+        font-size: 0.88em;
+        color: #9ca3af;
+        font-weight: 600;
+    }
+
+    .counter.ok { color: #059669; }
+
+    .starters {
+        display: none;
+        margin-top: 10px;
+        padding: 12px 14px;
+        background: #fff5f5;
+        border-radius: 8px;
+        border: 1px dashed #fca5a5;
+    }
+
+    .starters.open { display: block; }
+
+    .starters span {
+        display: block;
+        padding: 4px 0;
+        color: #7f1d1d;
+        line-height: 1.5;
+    }
+
+    .print-answer { display: none; }
+
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #fee2e2;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 8px;
+        padding: 13px 24px;
+        font-size: 1em;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:focus-visible {
+        outline: 3px solid rgba(220, 38, 38, 0.45);
+        outline-offset: 2px;
+    }
+
+    .print-btn { background: linear-gradient(135deg, #450a0a 0%, #ef4444 100%); color: white; }
+    .save-btn { background: #b91c1c; color: white; }
+    .load-btn { background: white; color: #b91c1c; border: 2px solid #b91c1c; }
+
+    .footer {
+        text-align: center;
+        padding: 18px;
+        background: #fef2f2;
+        color: #450a0a;
+        font-size: 0.92em;
+        font-weight: 500;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .btn { transition: none; }
+        .btn:hover { transform: none; }
+    }
+
+    @media (max-width: 640px) {
+        body { padding: 10px; }
+        .student-info { grid-template-columns: 1fr; }
+        .header h1 { font-size: 1.5em; }
+        .content { padding: 25px 18px; }
+        .question-hint { margin-left: 0; }
+    }
+
+    @media print {
+        @page { margin: 15mm; }
+        body { background: white; padding: 0; }
+        .container { box-shadow: none; border-radius: 0; max-width: 100%; overflow: visible; }
+        .header {
+            background: #450a0a !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            padding: 24px;
+        }
+        .question-number {
+            background: #450a0a !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .button-container, .starter-btn, .starters, .counter, .q-footer { display: none !important; }
+        textarea { display: none !important; }
+
+        /* Long answers may continue onto the next page; keep each question heading with its answer */
+        .question { margin-bottom: 22px; break-inside: auto; page-break-inside: auto; }
+        .question-text, .question-hint { break-after: avoid; page-break-after: avoid; }
+        .stage { break-after: avoid; page-break-after: avoid; break-inside: avoid; margin-top: 26px; }
+        .stage h2 { color: #7f1d1d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+        .print-answer {
+            display: block;
+            border-bottom: 1px solid #d1d5db;
+            padding: 8px 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.7;
+            orphans: 3;
+            widows: 3;
+        }
+
+        /* Empty answer: ruled lines for handwriting */
+        .print-answer.blank {
+            border-bottom: none;
+            min-height: 170px;
+            background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 33px, #cbd5e1 33px, #cbd5e1 34px);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .info-field input { border: none; border-bottom: 1px solid #9ca3af; border-radius: 0; background: none; }
+        .instructions { background: none; }
+        .footer { background: none; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>HCT LSC 1503 &ndash; LPA 6</h1>
+        <p>Reflection: My Interview Assessment</p>
+    </div>
+
+    <div class="content">
+        <div class="student-info">
+            <div class="info-field">
+                <label for="name">Student Name</label>
+                <input type="text" id="name" placeholder="Write your full name">
+            </div>
+            <div class="info-field">
+                <label for="id">Student ID</label>
+                <input type="text" id="id" placeholder="Write your ID number">
+            </div>
+            <div class="info-field">
+                <label for="section">Section</label>
+                <input type="text" id="section" placeholder="e.g. LSC 1503-01">
+            </div>
+            <div class="info-field">
+                <label for="date">Date</label>
+                <input type="date" id="date">
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h2>Before you start</h2>
+            <p>You have now completed your interview assessment. This reflection has three parts: <strong>before</strong> the interview, <strong>during</strong> the interview, and <strong>after</strong> the interview.</p>
+            <p>Answer the questions below in <strong>complete sentences</strong>. Be honest about your experience &mdash; there are no right or wrong answers here, and your answers do not change your interview grade. Aim for <strong>three to four sentences</strong> per question.</p>
+        </div>
+
+        <div class="stage">
+            <h2>Part 1: Before the interview</h2>
+            <span>How you planned and got ready</span>
+        </div>
+
+        <!-- Question 1 -->
+        <div class="question">
+            <div class="question-text">
+                <span class="question-number">1</span>
+                How did you plan and get ready for your interview? Describe what you did and when.
+            </div>
+            <p class="question-hint">Think about: your scripts, the apps you used, practising with a partner or your family, the mock interview, and what you did the day before.</p>
+            <textarea id="q1" placeholder="Write your answer here..."></textarea>
+            <div class="print-answer" id="p1"></div>
+            <div class="q-footer">
+                <button class="starter-btn" data-target="s1">Need help starting?</button>
+                <span class="counter" id="c1">0 words</span>
+            </div>
+            <div class="starters" id="s1">
+                <span>To get ready, I first&hellip;</span>
+                <span>In the last week, I practised&hellip;</span>
+                <span>The day before my interview, I&hellip;</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question">
+            <div class="question-text">
+                <span class="question-number">2</span>
+                Was your preparation enough? What helped you the most, and what do you wish you had done more of?
+            </div>
+            <p class="question-hint">Think about: which activity made the biggest difference, and what you ran out of time to do.</p>
+            <textarea id="q2" placeholder="Write your answer here..."></textarea>
+            <div class="print-answer" id="p2"></div>
+            <div class="q-footer">
+                <button class="starter-btn" data-target="s2">Need help starting?</button>
+                <span class="counter" id="c2">0 words</span>
+            </div>
+            <div class="starters" id="s2">
+                <span>The most useful preparation for me was&hellip; because&hellip;</span>
+                <span>I wish I had spent more time on&hellip;</span>
+                <span>My preparation was / was not enough because&hellip;</span>
+            </div>
+        </div>
+
+        <div class="stage">
+            <h2>Part 2: During the interview</h2>
+            <span>How the interview went on the day</span>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question">
+            <div class="question-text">
+                <span class="question-number">3</span>
+                How did your interview go? Which question did you answer best, and which one was the most difficult? Why?
+            </div>
+            <p class="question-hint">Think about: your answers, the vocabulary you used, whether you forgot anything, and any question you did not expect.</p>
+            <textarea id="q3" placeholder="Write your answer here..."></textarea>
+            <div class="print-answer" id="p3"></div>
+            <div class="q-footer">
+                <button class="starter-btn" data-target="s3">Need help starting?</button>
+                <span class="counter" id="c3">0 words</span>
+            </div>
+            <div class="starters" id="s3">
+                <span>My best answer was the question about&hellip;</span>
+                <span>The most difficult question was&hellip; because&hellip;</span>
+                <span>When I did not know what to say, I&hellip;</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="question">
+            <div class="question-text">
+                <span class="question-number">4</span>
+                What did you notice about your speaking and your body language during the interview?
+            </div>
+            <p class="question-hint">Think about: your voice, your speed, your pauses, your eye contact, your hands, and how you handled your nerves.</p>
+            <textarea id="q4" placeholder="Write your answer here..."></textarea>
+            <div class="print-answer" id="p4"></div>
+            <div class="q-footer">
+                <button class="starter-btn" data-target="s4">Need help starting?</button>
+                <span class="counter" id="c4">0 words</span>
+            </div>
+            <div class="starters" id="s4">
+                <span>During the interview, I noticed that my voice&hellip;</span>
+                <span>I think my eye contact was&hellip;</span>
+                <span>When I felt nervous, I&hellip;</span>
+            </div>
+        </div>
+
+        <div class="stage">
+            <h2>Part 3: After the interview</h2>
+            <span>What you would change and what comes next</span>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="question">
+            <div class="question-text">
+                <span class="question-number">5</span>
+                If you did the same interview again tomorrow, what would you do differently?
+            </div>
+            <p class="question-hint">Think about: your preparation, your answers, and your body language. Give one or two specific changes.</p>
+            <textarea id="q5" placeholder="Write your answer here..."></textarea>
+            <div class="print-answer" id="p5"></div>
+            <div class="q-footer">
+                <button class="starter-btn" data-target="s5">Need help starting?</button>
+                <span class="counter" id="c5">0 words</span>
+            </div>
+            <div class="starters" id="s5">
+                <span>If I did the interview again, I would&hellip;</span>
+                <span>Next time I would prepare&hellip;</span>
+                <span>I would not&hellip; again, because&hellip;</span>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="question">
+            <div class="question-text">
+                <span class="question-number">6</span>
+                What will you work on next? Name one speaking skill you want to improve and explain how you will practise it.
+            </div>
+            <p class="question-hint">Think about: one clear skill, and a real plan &mdash; where, when and how often you will practise it.</p>
+            <textarea id="q6" placeholder="Write your answer here..."></textarea>
+            <div class="print-answer" id="p6"></div>
+            <div class="q-footer">
+                <button class="starter-btn" data-target="s6">Need help starting?</button>
+                <span class="counter" id="c6">0 words</span>
+            </div>
+            <div class="starters" id="s6">
+                <span>The skill I want to improve is&hellip;</span>
+                <span>I will practise this by&hellip;</span>
+                <span>I will do this&hellip; times every week.</span>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button class="btn print-btn" id="printBtn">Print or save as PDF</button>
+            <button class="btn save-btn" id="saveBtn">Save my answers</button>
+            <button class="btn load-btn" id="loadBtn">Open a saved file</button>
+            <input type="file" id="fileInput" accept=".json" hidden>
+        </div>
+    </div>
+
+    <div class="footer">Designed by: Nazila Motahari</div>
+</div>
+
+<script>
+(function () {
+    var infoFields = ['name', 'id', 'section', 'date'];
+    var questions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'];
+
+    function countWords(text) {
+        var t = text.trim();
+        return t === '' ? 0 : t.split(/\s+/).length;
+    }
+
+    function updateCounter(id) {
+        var box = document.getElementById(id);
+        var counter = document.getElementById('c' + id.slice(1));
+        var n = countWords(box.value);
+        counter.textContent = n + (n === 1 ? ' word' : ' words');
+        counter.classList.toggle('ok', n >= 40);
+    }
+
+    function autoGrow(box) {
+        box.style.height = 'auto';
+        box.style.height = Math.max(120, box.scrollHeight) + 'px';
+    }
+
+    function mirror(id) {
+        var box = document.getElementById(id);
+        var out = document.getElementById('p' + id.slice(1));
+        out.textContent = box.value;
+        out.classList.toggle('blank', box.value.trim() === '');
+    }
+
+    function refresh(id) {
+        updateCounter(id);
+        autoGrow(document.getElementById(id));
+        mirror(id);
+    }
+
+    function refreshAll() {
+        questions.forEach(refresh);
+    }
+
+    questions.forEach(function (id) {
+        var box = document.getElementById(id);
+        ['input', 'paste', 'cut', 'change'].forEach(function (evt) {
+            box.addEventListener(evt, function () {
+                // paste/cut change the value after the event fires
+                setTimeout(function () { refresh(id); }, 0);
+            });
+        });
+    });
+
+    window.addEventListener('resize', function () {
+        questions.forEach(function (id) { autoGrow(document.getElementById(id)); });
+    });
+
+    window.addEventListener('beforeprint', refreshAll);
+
+    /* Sentence starters */
+    document.querySelectorAll('.starter-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var panel = document.getElementById(btn.dataset.target);
+            var open = panel.classList.toggle('open');
+            btn.textContent = open ? 'Hide the sentence starters' : 'Need help starting?';
+        });
+    });
+
+    /* Print */
+    document.getElementById('printBtn').addEventListener('click', function () {
+        refreshAll();
+        window.print();
+    });
+
+    /* Save */
+    document.getElementById('saveBtn').addEventListener('click', function () {
+        var data = { form: 'LPA 6', saved: new Date().toISOString() };
+        infoFields.concat(questions).forEach(function (f) {
+            data[f] = document.getElementById(f).value;
+        });
+        var name = (data.name || 'student').trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'student';
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'LPA-6-' + name + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    });
+
+    /* Load */
+    var fileInput = document.getElementById('fileInput');
+    document.getElementById('loadBtn').addEventListener('click', function () { fileInput.click(); });
+
+    fileInput.addEventListener('change', function (e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+            try {
+                var data = JSON.parse(reader.result);
+                if (data.form && data.form !== 'LPA 6') {
+                    alert('This file is from ' + data.form + ', not LPA 6. Choose your LPA 6 file.');
+                    return;
+                }
+                infoFields.concat(questions).forEach(function (f) {
+                    if (typeof data[f] === 'string') document.getElementById(f).value = data[f];
+                });
+                refreshAll();
+            } catch (err) {
+                alert('This file could not be opened. Choose a file you saved from this form.');
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    });
+
+    refreshAll();
+})();
+</script>
+</body>
+</html>
